@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/adamMcneil/mnemo#readme",
   "dependencies": {
+    "grpc-web": "^1.5.0",
     "ws": "^8.18.1"
   }
 }
