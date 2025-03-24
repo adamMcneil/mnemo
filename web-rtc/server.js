@@ -2,17 +2,26 @@ const WebSocket = require('ws');
 
 const wss = new WebSocket.Server({ port: 8080 });
 
-wss.on('connection', (ws) => {
-	console.log("connected")
-	ws.on('message', (message) => {
-		console.log("recieved message:", message.toString())
-		// Broadcast message to all connected clients except sender
-		wss.clients.forEach(client => {
-			if (client !== ws && client.readyState === WebSocket.OPEN) {
+let serverConnection = null
 
-				client.send(message.toString());
-			}
-		});
+wss.on('connection', (ws) => {
+	if (serverConnection == null) {
+		console.log("Game server is connected");
+		serverConnection = ws;
+	}
+
+	ws.on('message', (message) => {
+		if (ws == serverConnection) {
+			console.log("forwarding to everybody else")
+			wss.clients.forEach(client => {
+				if (client !== serverConnection && client.readyState === WebSocket.OPEN) {
+					client.send(message.toString());
+				}
+			});
+		} else {
+			console.log("forwarding to game server")
+			serverConnection.send(message.toString())
+		}
 	});
 });
 

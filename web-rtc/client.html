@@ -13,6 +13,8 @@
 	<button onclick="startConnection()">connect</button>
 
 	<script>
+		// this variable is probably a bad hack but it works if they join one at a time
+		let setOffer = false;
 		const ws = new WebSocket("ws://10.5.6.176:8080"); // Replace with LAN IP
 		console.log('Connected to WebSocket Signaller')
 
@@ -21,18 +23,23 @@
 		});
 
 		ws.onmessage = async (event) => {
+			if (peerConnection.connectionState == "connected") {
+				return;
+			}
 			const message = JSON.parse(event.data);
 
 			if (message.offer) {
+				console.log("recieved offer")
 				await peerConnection.setRemoteDescription(new RTCSessionDescription(message.offer));
 				const answer = await peerConnection.createAnswer();
 				await peerConnection.setLocalDescription(answer);
 				ws.send(JSON.stringify({answer}));
 			}
-			else if (message.answer) {
+			else if (message.answer && setOffer) {
+				console.log("recieved answer")
 				await peerConnection.setRemoteDescription(new RTCSessionDescription(message.answer));
 			}
-			else if (message.iceCandidate) {
+			else if (message.iceCandidate && setOffer) {
 				await peerConnection.addIceCandidate(new RTCIceCandidate(message.iceCandidate));
 			}
 		};
@@ -76,6 +83,7 @@
 			const offer = await peerConnection.createOffer();
 			await peerConnection.setLocalDescription(offer);
 			ws.send(JSON.stringify({offer}));
+			setOffer = true;
 		}
 	</script>
 </body>
