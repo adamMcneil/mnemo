@@ -43,32 +43,41 @@ const server = http.createServer((req, res) => {
   });
 });
 
-wssServer.on('connection', function connection(x) {
+wssServer.on('connection', function connection(wsServer) {
   wss.on('connection', function connection(ws, req) {
-    const clientIP = req.socket.remoteAddress
+    const clientIP = req.socket.remoteAddress;
     console.log(`Client connected: ${clientIP}`);
 
     ws.on('message', function incoming(message) {
       const messageObject = JSON.parse(message);
       messageObject.action = "update";
       messageObject.ip = clientIP;
-      x.send(JSON.stringify(messageObject));
-
+      wsServer.send(JSON.stringify(messageObject));
       controllerStates[messageObject.name] = messageObject;
     });
-
 
     ws.on('close', function() {
       console.log(`Client disconnected: ${clientIP}`);
       const message = JSON.stringify({ action: "disconnect", ip: clientIP });
-      x.send(message)
+      wsServer.send(message)
     });
   })
 });
 
+function getLocalIP() {
+  const interfaces = os.networkInterfaces();
+  for (const interfaceName in interfaces) {
+    for (const iface of interfaces[interfaceName]) {
+      if (iface.family === "IPv4" && !iface.internal) {
+        return iface.address;
+      }
+    }
+  }
+  return "127.0.0.1"; // Default if no network interface is found
+}
 
 server.listen(8080, '0.0.0.0', () => {
-  console.log('Server running at http://0.0.0.0:8080');
+  console.log(`Server running at http://${getLocalIP()}:8080/game`);
 });
 
 // Set up a command-line interface to listen for user input
