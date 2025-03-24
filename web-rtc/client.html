@@ -9,69 +9,74 @@
 
 <body>
 	<h2>WebRTC P2P Chat</h2>
-	<textarea id="chat" rows="10" cols="50" readonly></textarea><br>
-	<input type="text" id="message" placeholder="Type a message">
-	<button onclick="sendMessage()">Send</button>
+	<button onclick="sendMessage()">send</button>
+	<button onclick="startConnection()">connect</button>
 
 	<script>
-		const ws = new WebSocket("ws://localhost:8080");
-		const peerConnection = new RTCPeerConnection();
-		let dataChannel;
+		const ws = new WebSocket("ws://10.5.6.176:8080"); // Replace with LAN IP
+		console.log('Connected to WebSocket Signaller')
+
+		const peerConnection = new RTCPeerConnection({
+			iceServers: [] // No external STUN/TURN needed in pure LAN
+		});
 
 		ws.onmessage = async (event) => {
-			const signal = JSON.parse(event.data);
-			console.log("Received signal:", signal);
+			const message = JSON.parse(event.data);
 
-			if (signal.offer) {
-				await peerConnection.setRemoteDescription(new RTCSessionDescription(signal.offer));
+			if (message.offer) {
+				await peerConnection.setRemoteDescription(new RTCSessionDescription(message.offer));
 				const answer = await peerConnection.createAnswer();
 				await peerConnection.setLocalDescription(answer);
 				ws.send(JSON.stringify({answer}));
 			}
-
-			if (signal.answer) {
-				await peerConnection.setRemoteDescription(new RTCSessionDescription(signal.answer));
+			else if (message.answer) {
+				await peerConnection.setRemoteDescription(new RTCSessionDescription(message.answer));
 			}
-
-			if (signal.candidate) {
-				await peerConnection.addIceCandidate(new RTCIceCandidate(signal.candidate));
+			else if (message.iceCandidate) {
+				await peerConnection.addIceCandidate(new RTCIceCandidate(message.iceCandidate));
 			}
 		};
 
 		peerConnection.onicecandidate = (event) => {
 			if (event.candidate) {
-				ws.send(JSON.stringify({candidate: event.candidate}));
+				ws.send(JSON.stringify({iceCandidate: event.candidate}));
 			}
 		};
 
 		peerConnection.ondatachannel = (event) => {
-			dataChannel = event.channel;
-			setupDataChannel();
+			const receivedChannel = event.channel;
+
+			receivedChannel.onmessage = (event) => {
+				console.log("Received:", event.data);
+			}
 		};
 
-		function setupDataChannel() {
-			dataChannel.onopen = () => console.log("Data channel open!");
-			dataChannel.onmessage = (event) => {
-				document.getElementById("chat").value += "Peer: " + event.data + "\n";
-			};
-		}
+		const dataChannel = peerConnection.createDataChannel("chat", {
+			ordered: false,
+			reliable: false
+		});
 
-		function createOffer() {
-			dataChannel = peerConnection.createDataChannel("chat");
-			setupDataChannel();
-			peerConnection.createOffer().then(offer => {
-				peerConnection.setLocalDescription(offer);
-				ws.send(JSON.stringify({offer}));
-			});
+		dataChannel.onopen = () => {
+			if (dataChannel.readyState === "open") {
+				dataChannel.send("message");
+
+			}
 		}
+		dataChannel.onclose = () => console.log("Data channel is CLOSED!");
+		dataChannel.onerror = (error) => console.log("Data channel ERROR:", error);
 
 		function sendMessage() {
-			const msg = document.getElementById("message").value;
-			dataChannel.send(msg);
-			document.getElementById("chat").value += "You: " + msg + "\n";
+			if (dataChannel.readyState === "open") {
+				dataChannel.send("message");
+			}
+
 		}
 
-		setTimeout(createOffer, 1000); // Let one peer initiate the connection
+		async function startConnection() {
+			const offer = await peerConnection.createOffer();
+			await peerConnection.setLocalDescription(offer);
+			ws.send(JSON.stringify({offer}));
+		}
 	</script>
 </body>
 
