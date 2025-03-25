@@ -72,6 +72,9 @@
 	<div class="info">
 		<p>Scan the QR code above to join the game.</p>
 	</div>
+	<div id="peers">
+
+	</div>
 
 	<script>
 		const url = `http://${window.location.hostname}:8080`
@@ -87,6 +90,19 @@
 		console.log('Connected to WebSocket Signaller')
 
 		const peers = new Map();
+
+		const peersContainer = document.getElementById('peers');
+
+		function updatePeersUI() {
+			peersContainer.innerHTML = '';
+			peers.forEach((peer, id) => {
+				console.log(id)
+				const peerDiv = document.createElement('div');
+				peerDiv.textContent = `Peer ID: ${id}`;
+				peerDiv.classList.add('peer-item');
+				peersContainer.appendChild(peerDiv);
+			});
+		}
 
 		function makeConnection() {
 			const connection = new RTCPeerConnection({
@@ -109,6 +125,8 @@
 				reliable: false
 			});
 			dataChannel.onopen = () => {
+				console.log("Data channel open");
+				updatePeersUI();
 			}
 			dataChannel.onclose = () => console.log("Data channel is CLOSED!");
 			dataChannel.onerror = (error) => console.log("Data channel ERROR:", error);
@@ -119,10 +137,11 @@
 
 		ws.onmessage = async (event) => {
 			const message = JSON.parse(event.data);
-			const ip = message.ip
+			const ip = message.offer.ip
 			if (message.offer) {
 				let peer = makeConnection();
-				peers[ip] = peer;
+				peers.set(ip, peer);
+				// peers[ip] = peer;
 				await peer.connection.setRemoteDescription(new RTCSessionDescription(message.offer));
 				const answer = await peer.connection.createAnswer();
 				await peer.connection.setLocalDescription(answer);
