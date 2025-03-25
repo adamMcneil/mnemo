@@ -3,19 +3,9 @@
 const fs = require('fs');
 const http = require('http');
 const path = require('path');
-const WebSocket = require('./lib/websocket');
+const WebSocket = require('ws');
 const readline = require('readline');
 const os = require('os');
-
-WebSocket.createWebSocketStream = require('./lib/stream');
-WebSocket.Server = require('./lib/websocket-server');
-WebSocket.Receiver = require('./lib/receiver');
-WebSocket.Sender = require('./lib/sender');
-
-WebSocket.WebSocket = WebSocket;
-WebSocket.WebSocketServer = WebSocket.Server;
-
-module.exports = WebSocket;
 
 const wss = new WebSocket.Server({ port: 8000 });
 const wssServer = new WebSocket.Server({ port: 8001 });
