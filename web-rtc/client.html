@@ -23,9 +23,6 @@
 		});
 
 		ws.onmessage = async (event) => {
-			if (peerConnection.connectionState == "connected") {
-				return;
-			}
 			const message = JSON.parse(event.data);
 
 			if (message.offer) {
@@ -37,9 +34,19 @@
 			}
 			else if (message.answer && setOffer) {
 				console.log("recieved answer")
+				if (peerConnection.connectionState == "connected") {
+					console.log("blocking answer")
+					return;
+				}
 				await peerConnection.setRemoteDescription(new RTCSessionDescription(message.answer));
+				ws.close();
 			}
 			else if (message.iceCandidate && setOffer) {
+				console.log("ice")
+				if (peerConnection.connectionState == "connected") {
+					console.log("blocking ice")
+					return;
+				}
 				await peerConnection.addIceCandidate(new RTCIceCandidate(message.iceCandidate));
 			}
 		};
@@ -64,10 +71,6 @@
 		});
 
 		dataChannel.onopen = () => {
-			if (dataChannel.readyState === "open") {
-				dataChannel.send("message");
-
-			}
 		}
 		dataChannel.onclose = () => console.log("Data channel is CLOSED!");
 		dataChannel.onerror = (error) => console.log("Data channel ERROR:", error);
@@ -82,8 +85,8 @@
 		async function startConnection() {
 			const offer = await peerConnection.createOffer();
 			await peerConnection.setLocalDescription(offer);
-			ws.send(JSON.stringify({offer}));
 			setOffer = true;
+			ws.send(JSON.stringify({offer}));
 		}
 	</script>
 </body>

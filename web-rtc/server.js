@@ -1,3 +1,4 @@
+const { json } = require('stream/consumers');
 const WebSocket = require('ws');
 
 const wss = new WebSocket.Server({ port: 8080 });
@@ -11,6 +12,14 @@ wss.on('connection', (ws) => {
 	}
 
 	ws.on('message', (message) => {
+		const object = JSON.parse(message.toString())
+		if (object.offer) {
+			console.log("offer");
+		} else if (object.answer) {
+			console.log("answer");
+		} else if (object.iceCandidate) {
+			console.log("iceCandidate");
+		}
 		if (ws == serverConnection) {
 			console.log("forwarding to everybody else")
 			wss.clients.forEach(client => {

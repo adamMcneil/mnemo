@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>P2P WebRTC DataChannel</title>
+</head>
+
+<body>
+	<h2>WebRTC P2P Chat</h2>
+	<button onclick="sendMessage()">send</button>
+	<button onclick="startConnection()">connect</button>
+
+	<script>
+		const ws = new WebSocket("ws://10.5.6.176:8080");
+		console.log('Connected to WebSocket Signaller')
+
+		const peers = new Map();
+
+		function makeConnection() {
+			const connection = new RTCPeerConnection({
+				iceServers: [] // No external STUN/TURN needed in pure LAN
+			});
+			connection.onicecandidate = (event) => {
+				if (event.candidate) {
+					ws.send(JSON.stringify({iceCandidate: event.candidate}));
+				}
+			};
+			connection.ondatachannel = (event) => {
+				const receivedChannel = event.channel;
+
+				receivedChannel.onmessage = (event) => {
+					console.log("Received:", event.data);
+				}
+			};
+			const dataChannel = connection.createDataChannel("chat", {
+				ordered: false,
+				reliable: false
+			});
+			dataChannel.onopen = () => {
+			}
+			dataChannel.onclose = () => console.log("Data channel is CLOSED!");
+			dataChannel.onerror = (error) => console.log("Data channel ERROR:", error);
+			return {
+				connection: connection, dataChannel: dataChannel
+			}
+		}
+
+		ws.onmessage = async (event) => {
+			const message = JSON.parse(event.data);
+			const ip = message.ip
+			if (message.offer) {
+				let peer = makeConnection();
+				peers[ip] = peer;
+				await peer.connection.setRemoteDescription(new RTCSessionDescription(message.offer));
+				const answer = await peer.connection.createAnswer();
+				await peer.connection.setLocalDescription(answer);
+				ws.send(JSON.stringify({answer}));
+			}
+			else if (message.iceCandidate) {
+				await peers[ip].connection.addIceCandidate(new RTCIceCandidate(message.iceCandidate));
+			}
+		};
+
+		function sendMessage() {
+			peers.forEach((peer, ip) => {
+				if (peer.dataChannel.readyState === "open") {
+					peer.dataChannel.send("message");
+				}
+			});
+		}
+
+		async function startConnection() {
+			const offer = await peerConnection.createOffer();
+			await peerConnection.setLocalDescription(offer);
+			ws.send(JSON.stringify({offer}));
+		}
+	</script>
+</body>
+
+</html>
