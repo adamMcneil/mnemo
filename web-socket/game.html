@@ -93,8 +93,16 @@
 
 		const playerSize = 25;
 		const speed = 3;
-		const screenWidth = 900;
-		const screenHeight = 600;
+		const canvasWidth = 900;
+		const canvasHeight = 600;
+		const scoreBoardWidth = 200;
+
+		// Update canvas creation to include space for scoreboard
+		const canvas = document.createElement("canvas");
+		const ctx = canvas.getContext("2d");
+		document.body.appendChild(canvas);
+		canvas.width = canvasWidth + scoreBoardWidth;
+		canvas.height = canvasHeight;
 
 		function getRandomColor() {
 			const letters = '0123456789ABCDEF';
@@ -105,15 +113,22 @@
 			return color;
 		}
 
+		let lastTagTime = 0; // Track when the last tag occurred
+		const tagCooldown = 1000; // 1 second cooldown in milliseconds
+
 		class Player {
 			constructor(name, ip) {
 				this.name = name;
 				this.ip = ip;
 				this.color = getRandomColor();
-				this.x = screenWidth / 2;
-				this.y = screenHeight / 2;
+				this.x = canvas.width / 2;
+				this.y = canvas.height / 2;
+				this.isIt = false;
+				this.timeAsIt = 0;
 			}
 		}
+
+		let firstPlayer = true;
 
 		socket.onmessage = function (event) {
 			const messageObject = JSON.parse(event.data);
@@ -122,11 +137,23 @@
 
 			if (messageObject.action == "update") {
 				if (!playerPositions.has(ip)) {
-					playerPositions.set(ip, new Player(name, ip));
+					const newPlayer = new Player(name, ip);
+					if (firstPlayer) {
+						newPlayer.isIt = true;
+						firstPlayer = false;
+					}
+					playerPositions.set(ip, newPlayer);
 				}
 				controllerStates.set(ip, messageObject);
 			} else {
-				playerPositions.delete(messageObject.ip)
+				if (playerPositions.get(ip)?.isIt) {
+					const remainingPlayers = Array.from(playerPositions.keys()).filter(key => key !== ip);
+					if (remainingPlayers.length > 0) {
+						const newItPlayer = playerPositions.get(remainingPlayers[0]);
+						newItPlayer.isIt = true;
+					}
+				}
+				playerPositions.delete(ip);
 			}
 		};
 
@@ -134,37 +161,162 @@
 			console.log('Disconnected from controller database');
 		};
 
-		const canvas = document.createElement("canvas");
-		const ctx = canvas.getContext("2d");
-		document.body.appendChild(canvas);
-		canvas.width = screenWidth;
-		canvas.height = screenHeight;
+		const obstacles = [
+			{x: 100, y: 100, width: 50, height: 200},
+			{x: 300, y: 350, width: 200, height: 50},
+			{x: 600, y: 150, width: 100, height: 100},
+			{x: 750, y: 400, width: 150, height: 75}
+		];
 
+		let lastUpdateTime = Date.now();
 		function update() {
+			const currentTime = Date.now();
+			const deltaTime = (currentTime - lastUpdateTime) / 1000; // Time since last update in seconds
+			lastUpdateTime = currentTime;
 			for (const [id, player] of playerPositions) {
-				player.x += controllerStates.get(id).x * speed;
-				player.y += controllerStates.get(id).y * speed;
+				const newX = player.x + controllerStates.get(id).x * speed;
+				const newY = player.y + controllerStates.get(id).y * speed;
+
+				// Check for collisions with obstacles
+				let collisionX = false;
+				let collisionY = false;
+
+				for (const obstacle of obstacles) {
+					if (
+						newX < obstacle.x + obstacle.width &&
+						newX + playerSize > obstacle.x &&
+						player.y < obstacle.y + obstacle.height &&
+						player.y + playerSize > obstacle.y
+					) {
+						collisionX = true;
+					}
+
+					if (
+						player.x < obstacle.x + obstacle.width &&
+						player.x + playerSize > obstacle.x &&
+						newY < obstacle.y + obstacle.height &&
+						newY + playerSize > obstacle.y
+					) {
+						collisionY = true;
+					}
+				}
+
+				// Update player position if no collision
+				if (!collisionX) player.x = newX;
+				if (!collisionY) player.y = newY;
 
 				// Keep player within canvas bounds
 				if (player.x < 0) player.x = 0;
 				if (player.x + playerSize > canvas.width) player.x = canvas.width - playerSize;
 				if (player.y < 0) player.y = 0;
 				if (player.y + playerSize > canvas.height) player.y = canvas.height - playerSize;
+
 				playerPositions.set(id, player);
+
+
+				if (player.isIt) {
+					player.timeAsIt += deltaTime;
+				}
+
+				if (player.isIt && currentTime - lastTagTime > tagCooldown) {
+					for (const [otherId, otherPlayer] of playerPositions) {
+						if (id !== otherId &&
+							player.x < otherPlayer.x + playerSize &&
+							player.x + playerSize > otherPlayer.x &&
+							player.y < otherPlayer.y + playerSize &&
+							player.y + playerSize > otherPlayer.y
+						) {
+							// Tag successful!
+							player.isIt = false;
+							otherPlayer.isIt = true;
+							otherPlayer.color = "#FF0000"; // Make new "it" red
+							player.color = getRandomColor(); // Reset old "it" color
+							lastTagTime = currentTime; // Update last tag time
+
+							// Set justTagged for visual feedback
+							otherPlayer.justTagged = true;
+							setTimeout(() => {
+								otherPlayer.justTagged = false;
+							}, tagCooldown);
+
+							break; // Exit the loop after a successful tag
+						}
+					}
+				}
 			}
 		}
 
 		function draw() {
 			ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+			// Set clipping region for game area
+			ctx.save();
+			ctx.rect(0, 0, canvasWidth, canvasHeight);
+			ctx.clip();
+
+			// Draw players
 			for (const [id, player] of playerPositions) {
-				ctx.fillStyle = player.color;
+				// Set color based on "it" status
+				ctx.fillStyle = player.isIt ? "#FF0000" : player.color;
 				ctx.fillRect(player.x, player.y, playerSize, playerSize);
 
-				// Draw the player's name above the box
-				ctx.fillStyle = "black"; // Text color
-				ctx.font = "14px Arial"; // Font style
-				ctx.textAlign = "center"; // Center the text
-				ctx.fillText(player.name, player.x + playerSize / 2, player.y - 5); // Position above the box
+				// Draw the player's name and status
+				ctx.fillStyle = "black";
+				ctx.font = "14px Arial";
+				ctx.textAlign = "center";
+				ctx.fillText(player.name, player.x + playerSize / 2, player.y - 5);
+
+				// Add "IT!" text above tagged player
+				if (player.isIt) {
+					ctx.fillStyle = "#FF0000";
+					ctx.fillText("IT!", player.x + playerSize / 2, player.y - 20);
+				}
+
+				// Visual feedback for just tagged player
+				if (player.justTagged) {
+					ctx.strokeStyle = "#FFFF00";
+					ctx.lineWidth = 2;
+					ctx.strokeRect(player.x - 2, player.y - 2, playerSize + 4, playerSize + 4);
+				}
+			}
+
+			// Draw obstacles
+			ctx.fillStyle = "gray";
+			for (const obstacle of obstacles) {
+				ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+			}
+
+			ctx.restore(); // Restore the canvas state
+
+			// Draw scoreboard
+			drawScoreboard();
+		}
+
+		function drawScoreboard() {
+			const scoreBoardX = canvasWidth;
+			const scoreBoardY = 0;
+			const scoreBoardHeight = canvas.height;
+
+			// Draw scoreboard background
+			ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
+			ctx.fillRect(scoreBoardX, scoreBoardY, scoreBoardWidth, scoreBoardHeight);
+
+			// Draw scoreboard title
+			ctx.fillStyle = "white";
+			ctx.font = "20px Arial";
+			ctx.textAlign = "center";
+			ctx.fillText("Scoreboard", scoreBoardX + scoreBoardWidth / 2, scoreBoardY + 30);
+
+			// Draw player scores
+			ctx.font = "16px Arial";
+			ctx.textAlign = "left";
+			let yOffset = scoreBoardY + 60;
+			const sortedPlayers = Array.from(playerPositions.values()).sort((a, b) => b.timeAsIt - a.timeAsIt);
+			for (const player of sortedPlayers) {
+				const timeAsItFormatted = player.timeAsIt.toFixed(1);
+				ctx.fillStyle = player.isIt ? "#FF0000" : "white";
+				ctx.fillText(`${player.name}: ${timeAsItFormatted}s`, scoreBoardX + 10, yOffset);
+				yOffset += 30;
 			}
 		}
 
