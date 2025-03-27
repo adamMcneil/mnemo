@@ -5,20 +5,133 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>P2P WebRTC DataChannel</title>
+	<style>
+		html: {
+			overflow: hidden;
+		}
+
+		h1 {
+			color: green;
+		}
+
+		body {
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+			text-align: center;
+			height: 100vh;
+			background-color: #222;
+
+			overflow: hidden;
+			position: relative;
+			margin: 0;
+		}
+
+		.joystick-container {
+			position: relative;
+			width: 150px;
+			height: 150px;
+			background-color: rgba(255, 255, 255, 0.2);
+			border-radius: 50%;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+
+		.joystick {
+			position: absolute;
+			width: 60px;
+			height: 60px;
+			background-color: white;
+			border-radius: 50%;
+			transition: all 0.1s ease-out;
+		}
+
+		.top-container {
+			position: absolute;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+			top: 20px;
+			display: flex;
+			gap: 10px;
+			/* Adds spacing between buttons */
+		}
+
+		.bottom-container {
+			position: fixed;
+			bottom: 20px;
+			display: flex;
+			gap: 10px;
+			/* Adds spacing between buttons */
+		}
+
+		button {
+			background-color: #4CAF50;
+			/* Green */
+			border: none;
+			color: white;
+			padding: 12px 24px;
+			text-align: center;
+			text-decoration: none;
+			display: inline-block;
+			font-size: 16px;
+			border-radius: 8px;
+			cursor: pointer;
+			transition: background-color 0.3s ease, transform 0.1s ease;
+		}
+
+		button:hover {
+			background-color: #45a049;
+		}
+
+		button:active {
+			transform: scale(0.95);
+		}
+
+		input {
+			width: 250px;
+			padding: 10px;
+			margin-top: 10px;
+			border: 2px solid #ddd;
+			border-radius: 6px;
+			font-size: 16px;
+			background-color: #333;
+			color: white;
+			outline: none;
+			transition: border-color 0.3s ease;
+		}
+
+		input:focus {
+			border-color: #4CAF50;
+		}
+	</style>
 </head>
 
 <body>
-	<h2>WebRTC P2P Chat</h2>
-	<div>
+
+	<div class="top-container">
+		<h2>WebRTC P2P Chat</h2>
 		<input type="text" id="nameInput" placeholder="enter name">
 	</div>
+
+	<div class="joystick-container" id="joystick-container">
+		<div class="joystick" id="joystick"></div>
+	</div>
 	<button onclick="sendMessage()">send</button>
-	<button onclick="startConnection()">connect</button>
+
+	<div class="bottom-container">
+		<button onclick="startConnection()">Connect</button>
+		<button onclick="disconnect()">Disconnect</button>
+	</div>
+
 
 	<script>
+		// WebRTC
 		// this variable is probably a bad hack but it works if they join one at a time
 		let setOffer = false;
-		const ws = new WebSocket("ws://10.5.6.176:8081"); // Replace with LAN IP
+		const ws = new WebSocket("ws://10.5.6.176:8081");
 		console.log('Connected to WebSocket Signaller')
 
 		const peerConnection = new RTCPeerConnection({
@@ -77,9 +190,9 @@
 		dataChannel.onclose = () => console.log("Data channel is CLOSED!");
 		dataChannel.onerror = (error) => console.log("Data channel ERROR:", error);
 
-		function sendMessage() {
+		function sendMessage(message) {
 			if (dataChannel.readyState === "open") {
-				dataChannel.send("message");
+				dataChannel.send(message);
 			}
 
 		}
@@ -97,6 +210,60 @@
 			setOffer = true;
 			ws.send(JSON.stringify({offer}));
 		}
+
+
+		// Joy Stick
+		const joystick = document.getElementById('joystick');
+		const container = document.getElementById('joystick-container');
+
+		const containerRect = container.getBoundingClientRect();
+		const centerX = containerRect.width / 2;
+		const centerY = containerRect.height / 2;
+		const maxDistance = centerX; // Radius limit
+
+		function handleMove(event) {
+			const nameInput = document.getElementById('nameInput')
+			const name = nameInput.value;
+			if (!name) {
+				return
+			}
+			const touch = event.touches ? event.touches[0] : event;
+			const offsetX = touch.clientX - containerRect.left - centerX;
+			const offsetY = touch.clientY - containerRect.top - centerY;
+
+			// Calculate distance from center
+			const distance = Math.sqrt(offsetX ** 2 + offsetY ** 2);
+			const angle = Math.atan2(offsetY, offsetX);
+
+			// Restrict movement within circular boundary
+			const moveX = distance > maxDistance ? Math.cos(angle) * maxDistance : offsetX;
+			const moveY = distance > maxDistance ? Math.sin(angle) * maxDistance : offsetY;
+
+			joystick.style.transform = `translate(${moveX}px, ${moveY}px)`;
+
+			const direction = JSON.stringify({name: name, x: moveX / maxDistance, y: moveY / maxDistance, action: "update"})
+			sendMessage(direction);
+		}
+
+		function resetJoystick() {
+			const nameInput = document.getElementById('nameInput')
+			const name = nameInput.value;
+			joystick.style.transform = 'translate(0, 0)';
+			const direction = JSON.stringify({name: name, x: 0, y: 0, action: "update"})
+			sendMessage(direction)
+		}
+
+		// Event Listeners
+		joystick.addEventListener('mousedown', (e) => {
+			document.addEventListener('mousemove', handleMove);
+			document.addEventListener('mouseup', resetJoystick, {once: true});
+		});
+
+		joystick.addEventListener('touchstart', (e) => {
+			document.addEventListener('touchmove', handleMove);
+			document.addEventListener('touchend', resetJoystick, {once: true});
+		});
+
 	</script>
 </body>
 

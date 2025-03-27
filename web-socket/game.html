@@ -73,6 +73,7 @@
 	</div>
 
 	<script>
+		// QR Code
 		const url = `http://${window.location.hostname}:8080`
 		const qrcode = new QRCode(document.getElementById('qrcode'), {
 			text: url,
@@ -83,6 +84,7 @@
 			correctLevel: QRCode.CorrectLevel.H
 		});
 
+		// WebSocket
 		const socket = new WebSocket('ws://localhost:8001');
 		console.log('Created socket');
 

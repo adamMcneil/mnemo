@@ -87,6 +87,8 @@
 		console.log('Connected to WebSocket Signaller')
 
 		const peers = new Map();
+		const controllerStates = new Map();
+		const playerPositions = new Map();
 
 		const peersContainer = document.getElementById('peers');
 
@@ -112,11 +114,22 @@
 			};
 			connection.ondatachannel = (event) => {
 				const receivedChannel = event.channel;
-
 				receivedChannel.onmessage = (event) => {
 					console.log("Received:", event.data);
+					const messageObject = JSON.parse(event.data);
+					const name = messageObject.name;
+
+					if (messageObject.action == "update") {
+						if (!playerPositions.has(name)) {
+							playerPositions.set(name, new Player(name, name));
+						}
+						controllerStates.set(name, messageObject);
+					} else {
+						playerPositions.delete(messageObject.ip)
+					}
 				}
 			};
+
 			const dataChannel = connection.createDataChannel("chat", {
 				ordered: false,
 				reliable: false
@@ -161,6 +174,72 @@
 			await peerConnection.setLocalDescription(offer);
 			ws.send(JSON.stringify({offer}));
 		}
+
+		const playerSize = 25;
+		const speed = 3;
+		const screenWidth = 900;
+		const screenHeight = 600;
+
+		function getRandomColor() {
+			const letters = '0123456789ABCDEF';
+			let color = '#';
+			for (let i = 0; i < 6; i++) {
+				color += letters[Math.floor(Math.random() * 16)];
+			}
+			return color;
+		}
+
+		class Player {
+			constructor(name, ip) {
+				this.name = name;
+				this.ip = ip;
+				this.color = getRandomColor();
+				this.x = screenWidth / 2;
+				this.y = screenHeight / 2;
+			}
+		}
+
+		const canvas = document.createElement("canvas");
+		const ctx = canvas.getContext("2d");
+		document.body.appendChild(canvas);
+		canvas.width = screenWidth;
+		canvas.height = screenHeight;
+
+		function update() {
+			for (const [id, player] of playerPositions) {
+				player.x += controllerStates.get(id).x * speed;
+				player.y += controllerStates.get(id).y * speed;
+
+				// Keep player within canvas bounds
+				if (player.x < 0) player.x = 0;
+				if (player.x + playerSize > canvas.width) player.x = canvas.width - playerSize;
+				if (player.y < 0) player.y = 0;
+				if (player.y + playerSize > canvas.height) player.y = canvas.height - playerSize;
+				playerPositions.set(id, player);
+			}
+		}
+
+		function draw() {
+			ctx.clearRect(0, 0, canvas.width, canvas.height);
+			for (const [id, player] of playerPositions) {
+				ctx.fillStyle = player.color;
+				ctx.fillRect(player.x, player.y, playerSize, playerSize);
+
+				// Draw the player's name above the box
+				ctx.fillStyle = "black"; // Text color
+				ctx.font = "14px Arial"; // Font style
+				ctx.textAlign = "center"; // Center the text
+				ctx.fillText(player.name, player.x + playerSize / 2, player.y - 5); // Position above the box
+			}
+		}
+
+		function loop() {
+			update();
+			draw();
+			requestAnimationFrame(loop);
+		}
+
+		loop();
 	</script>
 </body>
 
