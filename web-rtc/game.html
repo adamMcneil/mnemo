@@ -7,7 +7,6 @@
 	<title>P2P WebRTC DataChannel</title>
 	<script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
 	<style>
-		/* General Reset */
 		* {
 			margin: 0;
 			padding: 0;
@@ -34,7 +33,6 @@
 			letter-spacing: 2px;
 		}
 
-		/* QR Code Styling */
 		#qrcode {
 			margin-bottom: 30px;
 			padding: 20px;
@@ -43,7 +41,6 @@
 			box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
 		}
 
-		/* Canvas Styling */
 		canvas {
 			border: 2px solid #333;
 			background-color: #ffffff;
@@ -137,18 +134,17 @@
 
 		ws.onmessage = async (event) => {
 			const message = JSON.parse(event.data);
-			const ip = message.offer.ip
+			const id = message.offer.id
 			if (message.offer) {
 				let peer = makeConnection();
-				peers.set(ip, peer);
-				// peers[ip] = peer;
+				peers.set(id, peer);
 				await peer.connection.setRemoteDescription(new RTCSessionDescription(message.offer));
 				const answer = await peer.connection.createAnswer();
 				await peer.connection.setLocalDescription(answer);
 				ws.send(JSON.stringify({answer}));
 			}
 			else if (message.iceCandidate) {
-				await peers[ip].connection.addIceCandidate(new RTCIceCandidate(message.iceCandidate));
+				await peers[id].connection.addIceCandidate(new RTCIceCandidate(message.iceCandidate));
 			}
 		};
 

@@ -9,6 +9,9 @@
 
 <body>
 	<h2>WebRTC P2P Chat</h2>
+	<div>
+		<input type="text" id="nameInput" placeholder="enter name">
+	</div>
 	<button onclick="sendMessage()">send</button>
 	<button onclick="startConnection()">connect</button>
 
@@ -82,8 +85,13 @@
 		}
 
 		async function startConnection() {
+			const nameInput = document.getElementById('nameInput')
+			const name = nameInput.value;
+			if (!name) {
+				return
+			}
 			const offer = await peerConnection.createOffer();
-			offer.ip = "something";
+			offer.id = name
 			console.log(offer)
 			await peerConnection.setLocalDescription(offer);
 			setOffer = true;
