@@ -112,14 +112,13 @@
 <body>
 
 	<div class="top-container">
-		<h2>WebRTC P2P Chat</h2>
+		<h1>WebRTC P2P</h1>
 		<input type="text" id="nameInput" placeholder="enter name">
 	</div>
 
 	<div class="joystick-container" id="joystick-container">
 		<div class="joystick" id="joystick"></div>
 	</div>
-	<button onclick="sendMessage()">send</button>
 
 	<div class="bottom-container">
 		<button onclick="startConnection()">Connect</button>
@@ -131,7 +130,12 @@
 		// WebRTC
 		// this variable is probably a bad hack but it works if they join one at a time
 		let setOffer = false;
-		const ws = new WebSocket("ws://10.5.6.176:8081");
+		let ws;
+		function connect() {
+			const ip = window.location.hostname;
+			ws = new WebSocket(`ws://${ip}:8081`);
+		}
+		connect();
 		console.log('Connected to WebSocket Signaller')
 
 		const peerConnection = new RTCPeerConnection({
@@ -180,15 +184,26 @@
 			}
 		};
 
-		const dataChannel = peerConnection.createDataChannel("chat", {
+		let dataChannel = peerConnection.createDataChannel("chat", {
 			ordered: false,
 			reliable: false
 		});
 
 		dataChannel.onopen = () => {
+			document.body.style.backgroundColor = "#444";
 		}
-		dataChannel.onclose = () => console.log("Data channel is CLOSED!");
+		dataChannel.onclose = () => {
+			document.body.style.backgroundColor = "#222";
+			console.log("Data channel is CLOSED!");
+		};
 		dataChannel.onerror = (error) => console.log("Data channel ERROR:", error);
+
+		function disconnect() {
+			const nameInput = document.getElementById('nameInput')
+			const name = nameInput.value;
+			sendMessage(JSON.stringify({name: name, action: "disconnect"}))
+			dataChannel.close();
+		}
 
 		function sendMessage(message) {
 			if (dataChannel.readyState === "open") {

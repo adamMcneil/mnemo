@@ -63,7 +63,7 @@
 </head>
 
 <body>
-	<h2>WebRTC P2P Chat</h2>
+	<h2>WebRTC P2P Game</h2>
 
 	<div id="qrcode"></div>
 	<div class="info">
@@ -95,7 +95,6 @@
 		function updatePeersUI() {
 			peersContainer.innerHTML = '';
 			peers.forEach((peer, id) => {
-				console.log(id)
 				const peerDiv = document.createElement('div');
 				peerDiv.textContent = `Peer ID: ${id}`;
 				peerDiv.classList.add('peer-item');
@@ -115,7 +114,6 @@
 			connection.ondatachannel = (event) => {
 				const receivedChannel = event.channel;
 				receivedChannel.onmessage = (event) => {
-					console.log("Received:", event.data);
 					const messageObject = JSON.parse(event.data);
 					const name = messageObject.name;
 
@@ -124,8 +122,10 @@
 							playerPositions.set(name, new Player(name, name));
 						}
 						controllerStates.set(name, messageObject);
+					} else if (messageObject.action == "disconnect") {
+						playerPositions.delete(messageObject.name);
 					} else {
-						playerPositions.delete(messageObject.ip)
+						console.log("invalid action");
 					}
 				}
 			};
@@ -138,7 +138,9 @@
 				console.log("Data channel open");
 				updatePeersUI();
 			}
-			dataChannel.onclose = () => console.log("Data channel is CLOSED!");
+			dataChannel.onclose = () => {
+				console.log("Data channel is CLOSED!");
+			}
 			dataChannel.onerror = (error) => console.log("Data channel ERROR:", error);
 			return {
 				connection: connection, dataChannel: dataChannel
