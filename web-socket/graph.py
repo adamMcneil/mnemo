@@ -3,8 +3,8 @@ import matplotlib.pyplot as plt
 
 x = 100
 # Read the file and parse timestamps
-recv = pd.read_csv('recieved-1743193554388.log', names=['time'])
-sent = pd.read_csv('sent-1743193554388.log', names=['time'])
+recv = pd.read_csv('recieved-1743195755769.log', names=['time'])
+sent = pd.read_csv('sent-1743195755769.log', names=['time'])
 
 # Group by second and count messages
 recv = recv['time'].astype(int)
