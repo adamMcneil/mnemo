@@ -129,8 +129,10 @@
 		}
 
 		let firstPlayer = true;
+		let timeRecievedMessage = [];
 
 		socket.onmessage = function (event) {
+			// timeRecievedMessage.push(Date.now())
 			const messageObject = JSON.parse(event.data);
 			const ip = messageObject.ip;
 			const name = messageObject.name;
@@ -151,6 +153,8 @@
 					if (remainingPlayers.length > 0) {
 						const newItPlayer = playerPositions.get(remainingPlayers[0]);
 						newItPlayer.isIt = true;
+					} else {
+						firstPlayer = true;
 					}
 				}
 				playerPositions.delete(ip);
