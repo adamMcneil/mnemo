@@ -102,6 +102,8 @@
 			});
 		}
 
+		let messageTimes = [];
+
 		function makeConnection() {
 			const connection = new RTCPeerConnection({
 				iceServers: [] // No external STUN/TURN needed in pure LAN
@@ -114,6 +116,7 @@
 			connection.ondatachannel = (event) => {
 				const receivedChannel = event.channel;
 				receivedChannel.onmessage = (event) => {
+					messageTimes.push(Date.now())
 					const messageObject = JSON.parse(event.data);
 					const name = messageObject.name;
 
