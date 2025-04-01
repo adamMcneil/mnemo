@@ -2,7 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 def plot_rtc(file_name):
-    x = 100
+    x = 1000
     # Read the file and parse timestamps
     recv = pd.read_csv(file_name, names=['time'])
 
@@ -20,7 +20,7 @@ def plot_rtc(file_name):
     plt.plot(recv_labels, recv_counts.values, marker='o', linestyle='-', label='WebRTC')
 
 def plot_socket(recv_name, sent_name):
-    x = 100
+    x = 1000
     # Read the file and parse timestamps
     recv = pd.read_csv(recv_name, names=['time'])
     sent = pd.read_csv(sent_name, names=['time'])
@@ -46,13 +46,13 @@ def plot_socket(recv_name, sent_name):
     plt.plot(recv_labels, recv_counts.values, marker='o', linestyle='-', label='WebSocket')
     # plt.plot(sent_labels, sent_counts.values, marker='o', linestyle='-')
 
-plot_socket('web-socket/recieved-1743459018648.log', 'web-socket/sent-1743459018648.log')
-plot_rtc('web-rtc/recv.log')
-plt.xlabel("Time Ranges (Midpoints)")
+plot_socket('data/one-client/recieved-1743459018648.data', 'data/one-client/sent-1743459018648.data')
+plot_rtc('data/one-client/recv.data')
+plt.xlabel("Time Ranges")
 plt.ylabel("Number of Messages")
-plt.title("Distribution of Times Grouped by 100s")
+plt.title("Number of Messages vs. Time")
 plt.ylim(bottom=0)
 plt.grid(True)
-plt.legend(loc='upper left')
+plt.legend(loc='upper right')
 plt.show()
 

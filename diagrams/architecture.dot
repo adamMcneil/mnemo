@@ -1,0 +1,30 @@
+digraph G {
+    rankdir=TB;
+    node [shape=rect style=filled fillcolor=gray fontcolor=white];
+
+    subgraph cluster_server {
+        label="Server";
+        style=filled;
+
+        backend [label="Controller\nDatabase", shape=cylinder];
+        frontend [label="Display", shape=box];
+        {rank=same; backend; frontend;}
+        backend -> frontend [label=""];
+    }
+
+
+    subgraph cluster_clients {
+        label="Controllers (Phones)";
+        style=filled;
+
+        client1 [label="", width=1.2, height=0.6];
+        client2 [label="", width=1.2, height=0.6];
+        client3 [label="", width=1.2, height=0.6];
+        client4 [label="", width=1.2, height=0.6];
+
+        client1 -> backend [label="", style=dashed];
+        client2 -> backend [label="", style=dashed];
+        client3 -> backend [label="", style=dashed];
+        client4 -> backend [label="", style=dashed];
+    }
+}
