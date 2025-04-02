@@ -1,38 +1,14 @@
 'use strict';
 
 const fs = require('fs');
-const http = require('http');
-const path = require('path');
 const WebSocket = require('ws');
 const readline = require('readline');
-const os = require('os');
+const createHTTPServer = require('../http-server');
 
 const wss = new WebSocket.Server({ port: 8000 });
 const wssServer = new WebSocket.Server({ port: 8001 });
 
 const controllerStates = new Map();
-
-const server = http.createServer((req, res) => {
-  let filePath;
-
-  // Determine which page to serve based on the URL path
-  if (req.url === '/game') {
-    filePath = path.join(__dirname, './game.html');  // The server front end
-  } else {
-    filePath = path.join(__dirname, './controller.html');  // The client front end
-  }
-
-  fs.readFile(filePath, (err, content) => {
-    if (err) {
-      res.writeHead(500, { 'Content-Type': 'text/plain' });
-      res.end('Internal Server Error');
-    } else {
-      res.writeHead(200, { 'Content-Type': 'text/html' });
-      res.end(content, 'utf-8');
-    }
-  });
-});
-
 
 const recieved = `recieved-${Date.now()}.log`;
 const sent = `sent-${Date.now()}.log`;
@@ -67,21 +43,7 @@ wssServer.on('connection', function connection(wsServer) {
   })
 });
 
-function getLocalIP() {
-  const interfaces = os.networkInterfaces();
-  for (const interfaceName in interfaces) {
-    for (const iface of interfaces[interfaceName]) {
-      if (iface.family === "IPv4" && !iface.internal) {
-        return iface.address;
-      }
-    }
-  }
-  return "127.0.0.1"; // Default if no network interface is found
-}
-
-server.listen(8080, '0.0.0.0', () => {
-  console.log(`Server running at http://${getLocalIP()}:8080/game`);
-});
+const httpServer = createHTTPServer(".").start(8080);
 
 // Set up a command-line interface to listen for user input
 const rl = readline.createInterface({
