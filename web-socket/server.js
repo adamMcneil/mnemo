@@ -14,13 +14,8 @@ const controllerStates = new Map();
 
 const recieved = `recieved-${Date.now()}.log`;
 const sent = `sent-${Date.now()}.log`;
-function writeTime(filePath) {
-  fs.writeFile(filePath, `${Date.now()}\n`, { flag: 'a' }, (err) => {
-    if (err) {
-      console.error('Error writing to file:', err);
-    }
-  });
-}
+const recvFileStream = fs.createWriteStream(recieved, { flags: 'a' });
+const sentFileStream = fs.createWriteStream(sent, { flags: 'a' });
 
 wssServer.on('connection', function connection(wsServer) {
   wss.on('connection', function connection(ws, req) {
@@ -30,7 +25,7 @@ wssServer.on('connection', function connection(wsServer) {
 
     ws.on('message', function incoming(message) {
       if (argv.record) {
-        writeTime(recieved);
+        recvFileStream.write(`${Date.now()}\n`)
       }
       const messageObject = JSON.parse(message);
       messageObject.action = "update";
@@ -38,7 +33,7 @@ wssServer.on('connection', function connection(wsServer) {
       controllerStates.set(messageObject.name, messageObject);
       wsServer.send(JSON.stringify(messageObject));
       if (argv.record) {
-        writeTime(sent);
+        sentFileStream.write(`${Date.now()}\n`)
       }
     });
 
