@@ -2,7 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 def plot_socket(recv_name, sent_name):
-    x = 100
+    x = 500
     # Read the file and parse timestamps
     recv = pd.read_csv(recv_name, names=['time'])
     sent = pd.read_csv(sent_name, names=['time'])
@@ -28,7 +28,7 @@ def plot_socket(recv_name, sent_name):
     plt.plot(recv_labels, recv_counts.values, marker='o', linestyle='-')
     plt.plot(sent_labels, sent_counts.values, marker='o', linestyle='-')
 
-plot_socket('recieved-1743195755769.log', 'sent-1743195755769.log')
+plot_socket('recieved-1743689011180.log', 'sent-1743689011180.log')
 
 plt.xlabel("Time Ranges (Midpoints)")
 plt.ylabel("Number of Messages")

@@ -1,7 +1,10 @@
 'use strict';
 
 const fs = require('fs');
+const readline = require('readline');
 const WebSocket = require('ws');
+const yargs = require('yargs');
+const argv = yargs.argv;
 const createHTTPServer = require('../http-server');
 
 const wss = new WebSocket.Server({ port: 8000 });
@@ -21,26 +24,50 @@ function writeTime(filePath) {
 
 wssServer.on('connection', function connection(wsServer) {
   wss.on('connection', function connection(ws, req) {
+
     const clientIP = req.socket.remoteAddress;
     console.log(`Client connected: ${clientIP}`);
 
     ws.on('message', function incoming(message) {
-      writeTime(recieved);
+      if (argv.record) {
+        writeTime(recieved);
+      }
       const messageObject = JSON.parse(message);
       messageObject.action = "update";
       messageObject.ip = clientIP;
+      controllerStates.set(messageObject.name, messageObject);
       wsServer.send(JSON.stringify(messageObject));
-      writeTime(sent);
-      controllerStates[messageObject.name] = messageObject;
+      if (argv.record) {
+        writeTime(sent);
+      }
     });
 
     ws.on('close', function() {
       console.log(`Client disconnected: ${clientIP}`);
-      const message = JSON.stringify({ action: "disconnect", ip: clientIP });
-      wsServer.send(message)
+      controllerStates.forEach((value, name) => {
+        if (value.ip = clientIP) {
+          const message = JSON.stringify({ action: "disconnect", ip: clientIP, name: name });
+          wsServer.send(message);
+          controllerStates.delete(name);
+        }
+      });
     });
   })
 });
 
 const httpServer = createHTTPServer('.');
 
+// Set up a command-line interface to listen for user input
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
+
+console.log("Type 'show' to display controllerStates:");
+rl.on('line', (input) => {
+  if (input.trim().toLowerCase() === 'show') {
+    console.log('Current controllerStates:', controllerStates);
+  } else {
+    console.log("Unknown command. Type 'show' to display controllerStates.");
+  }
+});

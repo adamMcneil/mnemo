@@ -83,18 +83,18 @@
 			const name = messageObject.name;
 
 			if (messageObject.action == "update") {
-				if (!playerPositions.has(ip)) {
+				if (!playerPositions.has(name)) {
 					const newPlayer = new Player(name, ip);
 					if (firstPlayer) {
 						newPlayer.isIt = true;
 						firstPlayer = false;
 					}
-					playerPositions.set(ip, newPlayer);
+					playerPositions.set(name, newPlayer);
 				}
-				controllerStates.set(ip, messageObject);
+				controllerStates.set(name, messageObject);
 			} else {
-				if (playerPositions.get(ip)?.isIt) {
-					const remainingPlayers = Array.from(playerPositions.keys()).filter(key => key !== ip);
+				if (playerPositions.get(name)?.isIt) {
+					const remainingPlayers = Array.from(playerPositions.keys()).filter(key => key !== name);
 					if (remainingPlayers.length > 0) {
 						const newItPlayer = playerPositions.get(remainingPlayers[0]);
 						newItPlayer.isIt = true;
@@ -102,7 +102,7 @@
 						firstPlayer = true;
 					}
 				}
-				playerPositions.delete(ip);
+				playerPositions.delete(name);
 			}
 		};
 

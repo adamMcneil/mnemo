@@ -124,10 +124,13 @@
     <div class="bottom-container">
         <button onclick="connect()">Connect</button>
         <button onclick="disconnect()">Disconnect</button>
+        <button onclick="copy()">Copy</button>
+        <button onclick="delet()">Delete</button>
     </div>
 
     <script>
         var socket;
+        var numOfCopies = 0;
 
         function connect() {
             const ip = window.location.hostname;
@@ -148,6 +151,17 @@
             socket.close();
         }
 
+        function copy() {
+            numOfCopies++;
+        }
+
+        function delet() {
+            numOfCopies--;
+            if (numOfCopies < 0) {
+                numOfCopies = 0;
+            }
+        }
+
 
         window.addEventListener("scroll", preventMotion, false);
         window.addEventListener("touchmove", preventMotion, false);
@@ -157,11 +171,20 @@
             event.stopPropagation();
         }
 
-        function sendMessage() {
-            const messageInput = document.getElementById('messageInput');
-            const message = messageInput.value;
-            socket.send(message);
-            messageInput.value = '';
+        function sendUpdate(x, y) {
+            const nameInput = document.getElementById('nameInput')
+            const name = nameInput.value;
+            if (!name) {
+                return
+            }
+
+            const direction = JSON.stringify({name: name, x: x / maxDistance, y: y / maxDistance})
+            socket.send(direction);
+            for (let i = 0; i < numOfCopies; i++) {
+                let newName = name + i;
+                const direction = JSON.stringify({name: newName, x: x / maxDistance, y: y / maxDistance})
+                socket.send(direction);
+            }
         }
 
         const joystick = document.getElementById('joystick');
@@ -173,11 +196,6 @@
         const maxDistance = centerX; // Radius limit
 
         function handleMove(event) {
-            const nameInput = document.getElementById('nameInput')
-            const name = nameInput.value;
-            if (!name) {
-                return
-            }
             const touch = event.touches ? event.touches[0] : event;
             const offsetX = touch.clientX - containerRect.left - centerX;
             const offsetY = touch.clientY - containerRect.top - centerY;
@@ -192,16 +210,14 @@
 
             joystick.style.transform = `translate(${moveX}px, ${moveY}px)`;
 
-            const direction = JSON.stringify({name: name, x: moveX / maxDistance, y: moveY / maxDistance})
-            socket.send(direction);
+            sendUpdate(moveX, moveY);
         }
 
         function resetJoystick() {
             const nameInput = document.getElementById('nameInput')
             const name = nameInput.value;
             joystick.style.transform = 'translate(0, 0)';
-            const direction = JSON.stringify({name: name, x: 0, y: 0})
-            socket.send(direction)
+            sendUpdate(0, 0);
         }
 
         // Event Listeners
