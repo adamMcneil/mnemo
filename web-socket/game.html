@@ -6,63 +6,8 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>WebSocket Server</title>
 	<script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
-	<style>
-		/* General Reset */
-		* {
-			margin: 0;
-			padding: 0;
-			box-sizing: border-box;
-		}
-
-		body {
-			font-family: Arial, sans-serif;
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			min-height: 100vh;
-			background-color: #f4f4f9;
-			flex-direction: column;
-			text-align: center;
-			color: #333;
-		}
-
-		h1 {
-			margin-bottom: 20px;
-			font-size: 2rem;
-			color: #333;
-			text-transform: uppercase;
-			letter-spacing: 2px;
-		}
-
-		/* QR Code Styling */
-		#qrcode {
-			margin-bottom: 30px;
-			padding: 20px;
-			background-color: #fff;
-			border-radius: 12px;
-			box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-		}
-
-		/* Canvas Styling */
-		canvas {
-			border: 2px solid #333;
-			background-color: #ffffff;
-			border-radius: 8px;
-			box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-		}
-
-		/* Info text styling */
-		.info {
-			margin-top: 20px;
-			font-size: 1rem;
-			color: #555;
-		}
-
-		.info span {
-			font-weight: bold;
-			color: #007bff;
-		}
-	</style>
+	<!-- <style src="game.css"></style> -->
+	<link rel="stylesheet" href="game.css">
 </head>
 
 <body>
@@ -74,7 +19,7 @@
 
 	<script>
 		// QR Code
-		const url = `http://${window.location.hostname}:8080`
+		const url = `http://${window.location.hostname}:8080/controller.html`
 		const qrcode = new QRCode(document.getElementById('qrcode'), {
 			text: url,
 			width: 128,

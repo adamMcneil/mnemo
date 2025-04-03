@@ -2,7 +2,6 @@
 
 const fs = require('fs');
 const WebSocket = require('ws');
-const readline = require('readline');
 const createHTTPServer = require('../http-server');
 
 const wss = new WebSocket.Server({ port: 8000 });
@@ -43,19 +42,5 @@ wssServer.on('connection', function connection(wsServer) {
   })
 });
 
-const httpServer = createHTTPServer(".").start(8080);
+const httpServer = createHTTPServer('.');
 
-// Set up a command-line interface to listen for user input
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout
-});
-
-console.log("Type 'show' to display controllerStates:");
-rl.on('line', (input) => {
-  if (input.trim().toLowerCase() === 'show') {
-    console.log('Current controllerStates:', controllerStates);
-  } else {
-    console.log("Unknown command. Type 'show' to display controllerStates.");
-  }
-});
