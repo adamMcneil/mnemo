@@ -46,8 +46,8 @@ def plot_socket(recv_name, sent_name):
     plt.plot(recv_labels, recv_counts.values, marker='o', linestyle='-', label='WebSocket')
     # plt.plot(sent_labels, sent_counts.values, marker='o', linestyle='-')
 
-plot_socket('data/one-client/recieved.data', 'data/one-client/sent.data')
-plot_rtc('data/one-client/recv.data')
+plot_socket('data/five-client/recieved.data', 'data/five-client/sent.data')
+# plot_rtc('data/one-client/recv.data')
 plt.xlabel("Time (1/10s)")
 plt.ylabel("Number of Messages")
 plt.title("Number of Messages vs. Time (1/10s)")

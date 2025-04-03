@@ -37,7 +37,7 @@
 		const playerPositions = new Map();
 
 		const playerSize = 25;
-		const speed = 3;
+		const speed = 200;
 		const canvasWidth = 900;
 		const canvasHeight = 600;
 		const scoreBoardWidth = 200;
@@ -123,8 +123,8 @@
 			const deltaTime = (currentTime - lastUpdateTime) / 1000; // Time since last update in seconds
 			lastUpdateTime = currentTime;
 			for (const [id, player] of playerPositions) {
-				const newX = player.x + controllerStates.get(id).x * speed;
-				const newY = player.y + controllerStates.get(id).y * speed;
+				const newX = player.x + controllerStates.get(id).x * speed * deltaTime;
+				const newY = player.y + controllerStates.get(id).y * speed * deltaTime;
 
 				// Check for collisions with obstacles
 				let collisionX = false;

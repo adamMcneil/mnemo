@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import sys
 
 def plot_socket(recv_name, sent_name):
-    x = 100
+    x = 1000
     # Read the file and parse timestamps
     recv = pd.read_csv(recv_name, names=['time'])
     sent = pd.read_csv(sent_name, names=['time'])
@@ -27,7 +27,7 @@ def plot_socket(recv_name, sent_name):
     sent_labels = [(interval.left + (x/2))/x for interval in sent_counts.index]
 
     plt.plot(recv_labels, recv_counts.values, marker='o', linestyle='-', label="Messages Recieved")
-    plt.plot(sent_labels, sent_counts.values, marker='o', linestyle='-', label="Messages Sent")
+    # plt.plot(sent_labels, sent_counts.values, marker='o', linestyle='-', label="Messages Sent")
 
 number = sys.argv[1]
 plot_socket('recieved-'+number+'.log', 'sent-'+number+'.log')
