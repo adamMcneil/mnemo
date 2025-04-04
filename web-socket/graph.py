@@ -3,34 +3,36 @@ import matplotlib.pyplot as plt
 import sys
 
 def plot_socket(recv_name, sent_name):
-    x = 1000
+    x = 100
     # Read the file and parse timestamps
     recv = pd.read_csv(recv_name, names=['time'])
-    sent = pd.read_csv(sent_name, names=['time'])
+    # sent = pd.read_csv(sent_name, names=['time'])
 
     # Group by second and count messages
     recv = recv['time'].astype(int)
-    sent = sent['time'].astype(int)
+    # sent = sent['time'].astype(int)
     min = recv.min()
     recv = recv.sub(min)
-    sent = sent.sub(min)
+    # sent = sent.sub(min)
     min = recv.min()
-    max = sent.max()
+    max = recv.max()
 
     recv_group = pd.cut(recv, bins=range(min, max+x, x), right=False)
-    sent_group = pd.cut(sent, bins=range(min, max+x, x), right=False)
+    # sent_group = pd.cut(sent, bins=range(min, max+x, x), right=False)
 
     recv_counts = pd.value_counts(recv_group).sort_index()
     recv_labels = [(interval.left + (x/2))/x for interval in recv_counts.index]
 
-    sent_counts = pd.value_counts(sent_group).sort_index()
-    sent_labels = [(interval.left + (x/2))/x for interval in sent_counts.index]
+    # sent_counts = pd.value_counts(sent_group).sort_index()
+    # sent_labels = [(interval.left + (x/2))/x for interval in sent_counts.index]
 
     plt.plot(recv_labels, recv_counts.values, marker='o', linestyle='-', label="Messages Recieved")
     # plt.plot(sent_labels, sent_counts.values, marker='o', linestyle='-', label="Messages Sent")
 
 number = sys.argv[1]
-plot_socket('recieved-'+number+'.log', 'sent-'+number+'.log')
+recv_file = 'recieved-250-clients-10-sec.data'
+sent_file = 'sent-'+number+'.log'
+plot_socket(recv_file, sent_file)
 
 
 plt.xlabel("Time(1/10s)")

@@ -114,6 +114,7 @@
 	<div class="top-container">
 		<h1>WebRTC Controller</h1>
 		<input type="text" id="nameInput" placeholder="enter name">
+		<input type="text" id="copyInput" placeholder="enter number of copies">
 	</div>
 
 	<div class="joystick-container" id="joystick-container">
@@ -127,6 +128,20 @@
 
 
 	<script>
+
+		var numOfCopies = 0;
+		var name = "";
+
+		const copyInput = document.getElementById("copyInput");
+		copyInput.addEventListener("input", () => {
+			numOfCopies = parseInt(copyInput.value, 10) || 0;
+		});
+
+		const nameInput = document.getElementById("nameInput");
+		nameInput.addEventListener("input", () => {
+			name = nameInput.value;
+			console.log(name)
+		});
 		// WebRTC
 		// this variable is probably a bad hack but it works if they join one at a time
 		let setOffer = false;
@@ -199,22 +214,29 @@
 		dataChannel.onerror = (error) => console.log("Data channel ERROR:", error);
 
 		function disconnect() {
-			const nameInput = document.getElementById('nameInput')
-			const name = nameInput.value;
-			sendMessage(JSON.stringify({name: name, action: "disconnect"}))
+			dataChannel.send(JSON.stringify({name: name, action: "disconnect"}))
+			for (let i = 0; i < numOfCopies; i++) {
+				let newName = name + i;
+				const message = JSON.stringify({name: newName, action: "disconnect"})
+				dataChannel.send(message);
+			}
 			dataChannel.close();
 		}
 
-		function sendMessage(message) {
+		function sendMessage(x, y) {
 			if (dataChannel.readyState === "open") {
+				const message = JSON.stringify({name: name, x: x / maxDistance, y: y / maxDistance, action: "update"})
 				dataChannel.send(message);
+				for (let i = 0; i < numOfCopies; i++) {
+					let newName = name + i;
+					const message = JSON.stringify({name: newName, x: x / maxDistance, y: y / maxDistance, action: "update"})
+					dataChannel.send(message);
+				}
 			}
 
 		}
 
 		async function startConnection() {
-			const nameInput = document.getElementById('nameInput')
-			const name = nameInput.value;
 			if (!name) {
 				return
 			}
@@ -237,8 +259,6 @@
 		const maxDistance = centerX; // Radius limit
 
 		function handleMove(event) {
-			const nameInput = document.getElementById('nameInput')
-			const name = nameInput.value;
 			if (!name) {
 				return
 			}
@@ -256,16 +276,12 @@
 
 			joystick.style.transform = `translate(${moveX}px, ${moveY}px)`;
 
-			const direction = JSON.stringify({name: name, x: moveX / maxDistance, y: moveY / maxDistance, action: "update"})
-			sendMessage(direction);
+			sendMessage(moveX, moveY);
 		}
 
 		function resetJoystick() {
-			const nameInput = document.getElementById('nameInput')
-			const name = nameInput.value;
 			joystick.style.transform = 'translate(0, 0)';
-			const direction = JSON.stringify({name: name, x: 0, y: 0, action: "update"})
-			sendMessage(direction)
+			sendMessage(0, 0);
 		}
 
 		// Event Listeners
