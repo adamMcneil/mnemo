@@ -30,7 +30,7 @@ def plot_socket(recv_name, sent_name):
     # plt.plot(sent_labels, sent_counts.values, marker='o', linestyle='-', label="Messages Sent")
 
 number = sys.argv[1]
-recv_file = 'recieved-1743864594037.log'
+recv_file = 'recieved-1743865329632.log'
 sent_file = 'sent-'+number+'.log'
 plot_socket(recv_file, sent_file)
 

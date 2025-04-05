@@ -20,7 +20,7 @@ def plot_rtc(file_name):
     recv_labels = [(interval.left + (x/2))/x for interval in recv_counts.index]
     plt.plot(recv_labels, recv_counts.values, marker='o', linestyle='-')
 
-plot_rtc('web-rtc-100-client.data')
+plot_rtc('web-rtc-250-client.data')
 
 plt.xlabel("Time Ranges (Midpoints)")
 plt.ylabel("Number of Messages")
