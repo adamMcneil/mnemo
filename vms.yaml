@@ -1,0 +1,27 @@
+session_name: vms
+windows:
+  - window_name: all-vms
+    layout: tiled
+    panes:
+      - ssh adamwm4@sp25-cs525-0401.cs.illinois.edu
+      - ssh adamwm4@sp25-cs525-0402.cs.illinois.edu
+      - ssh adamwm4@sp25-cs525-0403.cs.illinois.edu
+      - ssh adamwm4@sp25-cs525-0404.cs.illinois.edu
+      # - ssh adamwm4@sp25-cs525-0405.cs.illinois.edu
+      # - ssh adamwm4@sp25-cs525-0406.cs.illinois.edu
+      # - ssh adamwm4@sp25-cs525-0407.cs.illinois.edu
+      # - ssh adamwm4@sp25-cs525-0408.cs.illinois.edu
+      # - ssh adamwm4@sp25-cs525-0409.cs.illinois.edu
+      # - ssh adamwm4@sp25-cs525-0410.cs.illinois.edu
+      # - ssh adamwm4@sp25-cs525-0411.cs.illinois.edu
+      # - ssh adamwm4@sp25-cs525-0412.cs.illinois.edu
+      # - ssh adamwm4@sp25-cs525-0413.cs.illinois.edu
+      # - ssh adamwm4@sp25-cs525-0414.cs.illinois.edu
+      # - ssh adamwm4@sp25-cs525-0415.cs.illinois.edu
+      # - ssh adamwm4@sp25-cs525-0416.cs.illinois.edu
+      # - ssh adamwm4@sp25-cs525-0417.cs.illinois.edu
+      # - ssh adamwm4@sp25-cs525-0418.cs.illinois.edu
+      # - ssh adamwm4@sp25-cs525-0419.cs.illinois.edu
+      # - ssh adamwm4@sp25-cs525-0420.cs.illinois.edu
+      # - ssh adamwm4@sp25-cs598a-12.cs.illinois.edu
+      # - ssh adamwm4@sp25-cs598yp-21.cs.illinois.edu
