@@ -11,7 +11,7 @@ export const options = {
 
 
 export default function() {
-	const url = 'ws://localhost:8000';
+	const url = 'ws://172.22.150.210:8000';
 	const params = { tags: { test_type: 'latency_measurement' } };
 	const maxMessages = 1000;
 	let messageId = 0;
