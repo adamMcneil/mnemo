@@ -15,6 +15,7 @@ max_durations = [entry['latency']['max'] for entry in data]
 # Plot
 sns.set(style="whitegrid")
 plt.figure(figsize=(10, 6))
+plt.rcParams.update({'font.size': 18})
 
 plt.plot(vus, avg_durations, marker='o', label='Avg Duration (ms)')
 plt.plot(vus, p95_durations, marker='x', label='95th Percentile (ms)')

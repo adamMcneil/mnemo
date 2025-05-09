@@ -6,7 +6,7 @@ export const latencyTrend = new Trend('ws_message_latency', true);
 
 export const options = {
 	vus: 250,
-	duration: '10s',
+	duration: '1s',
 };
 
 
