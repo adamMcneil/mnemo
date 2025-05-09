@@ -7,7 +7,7 @@ with open('combined_results.json') as f:
     data = json.load(f)
 
 # Extract data
-vus = [entry['vus'] for entry in data]
+vus = [entry['vus_max'] for entry in data]
 avg_durations = [entry['latency']['avg'] for entry in data]
 p95_durations = [entry['latency']['p95'] for entry in data]
 max_durations = [entry['latency']['max'] for entry in data]

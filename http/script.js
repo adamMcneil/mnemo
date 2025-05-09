@@ -15,11 +15,13 @@ export default function() {
 
 export function handleSummary(data) {
 	const metrics = data.metrics;
+	const vus = data.metrics['vus']?.values?.value || 0;
+	const vusMax = data.metrics['vus_max']?.values?.value || 0;
 
 	return {
 		'summary.json': JSON.stringify(
 			{
-				http_req_duration: {
+				latency: {
 					avg: metrics.http_req_duration.values.avg,
 					min: metrics.http_req_duration.values.min,
 					max: metrics.http_req_duration.values.max,
@@ -37,9 +39,8 @@ export function handleSummary(data) {
 					rate: metrics.http_req_failed.values.rate,
 					fails: metrics.http_req_failed.values.fails,
 				},
-				vus: metrics.vus.values.value,
-				iterations: metrics.iterations.values.count,
-				duration_ms: data.state.testRunDurationMs
+				vus,
+				vus_max: vusMax,
 			},
 			null,
 			2 // pretty-print with 2-space indentation

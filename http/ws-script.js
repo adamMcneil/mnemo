@@ -5,8 +5,8 @@ import { Trend } from 'k6/metrics';
 export const latencyTrend = new Trend('ws_message_latency', true);
 
 export const options = {
-	vus: 100,
-	duration: '1s',
+	vus: 250,
+	duration: '10s',
 };
 
 
@@ -38,8 +38,9 @@ export default function() {
 }
 
 export function handleSummary(data) {
-	const latency = data.metrics['ws_message_latency'].values;
-	const vus = data.metrics['vus'].values.value;
+	const latency = data.metrics['ws_message_latency']?.values || {};
+	const vus = data.metrics['vus']?.values?.value || 0;
+	const vusMax = data.metrics['vus_max']?.values?.value || 0;
 
 	return {
 		'summary.json': JSON.stringify({
@@ -51,7 +52,8 @@ export function handleSummary(data) {
 				p90: latency['p(90)'],
 				p95: latency['p(95)'],
 			},
-			vus: vus
+			vus,
+			vus_max: vusMax,
 		}, null, 2),
 	};
 }
