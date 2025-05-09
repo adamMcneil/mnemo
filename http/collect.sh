@@ -4,7 +4,7 @@
 echo "[" > combined_results.json
 
 # List of VU counts
-for vus in 1 10 50 100 200 500 800 1000 ; do
+for vus in 1 10 25 50 75 100 150 200 ; do
   echo "Running test with $vus VUs..."
   k6 run script.js --vus $vus > /dev/null
 
