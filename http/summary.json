@@ -1,23 +1,23 @@
 {
   "http_req_duration": {
-    "avg": 137.48693872001985,
-    "min": 4.145026,
-    "max": 361.508703,
-    "p95": 229.78084024999998
+    "avg": 0,
+    "min": 0,
+    "max": 0,
+    "p95": 0
   },
   "http_req_blocked": {
-    "avg": 122.06584697014198,
-    "max": 1065.329495
+    "avg": 0,
+    "max": 0
   },
   "http_req_connecting": {
-    "avg": 121.98948665834558,
-    "max": 1065.306719
+    "avg": 0,
+    "max": 0
   },
   "http_req_failed": {
-    "rate": 0,
-    "fails": 4086
+    "rate": 1,
+    "fails": 0
   },
   "vus": 1000,
-  "iterations": 4086,
-  "duration_ms": 1316.31519
+  "iterations": 1000,
+  "duration_ms": 30157.758915
 }
