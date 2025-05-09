@@ -1,95 +1,95 @@
 [
 {
   "http_req_duration": {
-    "avg": 0,
-    "min": 0,
-    "max": 0,
-    "p95": 0
+    "avg": 43.38321408536585,
+    "min": 36.003862,
+    "max": 273.355838,
+    "p95": 53.65981485
   },
   "http_req_blocked": {
-    "avg": 0,
-    "max": 0
+    "avg": 0.3972078292682927,
+    "max": 65.049658
   },
   "http_req_connecting": {
-    "avg": 0,
-    "max": 0
+    "avg": 0.08564423780487805,
+    "max": 14.045655
   },
   "http_req_failed": {
-    "rate": 1,
-    "fails": 0
+    "rate": 0,
+    "fails": 164
   },
   "vus": 1,
-  "iterations": 1,
-  "duration_ms": 30025.51517
+  "iterations": 164,
+  "duration_ms": 10026.069148
 },
 {
   "http_req_duration": {
-    "avg": 0,
-    "min": 0,
-    "max": 0,
-    "p95": 0
+    "avg": 40.5872509041255,
+    "min": 35.070625,
+    "max": 127.120426,
+    "p95": 59.730218
   },
   "http_req_blocked": {
-    "avg": 0,
-    "max": 0
+    "avg": 0.3944089459616497,
+    "max": 73.382686
   },
   "http_req_connecting": {
-    "avg": 0,
-    "max": 0
+    "avg": 0.08189957234166183,
+    "max": 16.03721
   },
   "http_req_failed": {
-    "rate": 1,
-    "fails": 0
+    "rate": 0,
+    "fails": 1721
   },
   "vus": 10,
-  "iterations": 10,
-  "duration_ms": 30055.068467
+  "iterations": 1721,
+  "duration_ms": 10052.676072
 },
 {
   "http_req_duration": {
-    "avg": 0,
-    "min": 0,
-    "max": 0,
-    "p95": 0
+    "avg": 48.47382415713169,
+    "min": 34.752902,
+    "max": 184.890459,
+    "p95": 69.3592425
   },
   "http_req_blocked": {
-    "avg": 0,
-    "max": 0
+    "avg": 0.46557626931188817,
+    "max": 96.068096
   },
   "http_req_connecting": {
-    "avg": 0,
-    "max": 0
+    "avg": 0.1036007300290008,
+    "max": 17.768493
   },
   "http_req_failed": {
-    "rate": 1,
-    "fails": 0
+    "rate": 0,
+    "fails": 7586
   },
   "vus": 50,
-  "iterations": 50,
-  "duration_ms": 30053.968349
+  "iterations": 7586,
+  "duration_ms": 10068.225194
 },
 {
   "http_req_duration": {
-    "avg": 0,
-    "min": 0,
-    "max": 0,
-    "p95": 0
+    "avg": 114.32922569540091,
+    "min": 35.568114,
+    "max": 243.50262,
+    "p95": 128.05109824999997
   },
   "http_req_blocked": {
-    "avg": 0,
-    "max": 0
+    "avg": 1.3291952377135303,
+    "max": 165.445761
   },
   "http_req_connecting": {
-    "avg": 0,
-    "max": 0
+    "avg": 0.42936589264126146,
+    "max": 67.249781
   },
   "http_req_failed": {
-    "rate": 1,
-    "fails": 0
+    "rate": 0,
+    "fails": 7610
   },
   "vus": 100,
-  "iterations": 100,
-  "duration_ms": 30075.354144
+  "iterations": 7610,
+  "duration_ms": 10165.625576
 }{
   "http_req_duration": {
     "avg": 0,
@@ -102,16 +102,16 @@
     "max": 0
   },
   "http_req_connecting": {
-    "avg": 0,
-    "max": 0
+    "avg": 25.565723592216404,
+    "max": 3125.521036
   },
   "http_req_failed": {
     "rate": 1,
     "fails": 0
   },
   "vus": 200,
-  "iterations": 200,
-  "duration_ms": 30039.054471
+  "iterations": 31502,
+  "duration_ms": 10045.618666
 },
 {
   "http_req_duration": {
@@ -125,16 +125,16 @@
     "max": 0
   },
   "http_req_connecting": {
-    "avg": 0,
-    "max": 0
+    "avg": 55.49822394600563,
+    "max": 3158.527712
   },
   "http_req_failed": {
     "rate": 1,
     "fails": 0
   },
-  "vus": 500,
-  "iterations": 500,
-  "duration_ms": 30114.016169
+  "vus": 5,
+  "iterations": 37652,
+  "duration_ms": 11935.182828
 },
 {
   "http_req_duration": {
@@ -148,16 +148,16 @@
     "max": 0
   },
   "http_req_connecting": {
-    "avg": 0,
-    "max": 0
+    "avg": 96.08733670879909,
+    "max": 3270.175839
   },
   "http_req_failed": {
     "rate": 1,
     "fails": 0
   },
   "vus": 800,
-  "iterations": 800,
-  "duration_ms": 30129.571304
+  "iterations": 37991,
+  "duration_ms": 10192.419715
 },
 {
   "http_req_duration": {
@@ -171,15 +171,15 @@
     "max": 0
   },
   "http_req_connecting": {
-    "avg": 0,
-    "max": 0
+    "avg": 106.69086519025089,
+    "max": 3123.728053
   },
   "http_req_failed": {
     "rate": 1,
     "fails": 0
   },
-  "vus": 1000,
-  "iterations": 1000,
-  "duration_ms": 30157.758915
+  "vus": 1,
+  "iterations": 6770,
+  "duration_ms": 36437.861723
 },
 ]

@@ -3,13 +3,13 @@ import ws from 'k6/ws';
 import { sleep } from 'k6';
 
 export let options = {
-	vus: 1000,       // virtual users
-	duration: '1s',
-	noConnectionReuse: true,
+	vus: 1,       // virtual users
+	duration: '10s',
+	// noConnectionReuse: true,
 };
 
 export default function() {
-	http.post('https://6be5-192-241-60-98.ngrok-free.app:3000/api/movement');
+	http.post('https://6be5-192-241-60-98.ngrok-free.app/api/movement');
 	sleep(1.0 / 60.0);
 }
 

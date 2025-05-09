@@ -10,14 +10,14 @@
     "max": 0
   },
   "http_req_connecting": {
-    "avg": 0,
-    "max": 0
+    "avg": 106.69086519025089,
+    "max": 3123.728053
   },
   "http_req_failed": {
     "rate": 1,
     "fails": 0
   },
-  "vus": 1000,
-  "iterations": 1000,
-  "duration_ms": 30157.758915
+  "vus": 1,
+  "iterations": 6770,
+  "duration_ms": 36437.861723
 }
