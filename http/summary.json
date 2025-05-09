@@ -1,23 +1,11 @@
 {
-  "http_req_duration": {
-    "avg": 0,
+  "latency": {
+    "avg": 4.0902734937281515,
     "min": 0,
-    "max": 0,
-    "p95": 0
+    "med": 0,
+    "max": 37,
+    "p90": 19,
+    "p95": 33
   },
-  "http_req_blocked": {
-    "avg": 0,
-    "max": 0
-  },
-  "http_req_connecting": {
-    "avg": 23.55046154696469,
-    "max": 1092.809911
-  },
-  "http_req_failed": {
-    "rate": 1,
-    "fails": 0
-  },
-  "vus": 200,
-  "iterations": 33174,
-  "duration_ms": 10051.981717
+  "vus": 26
 }

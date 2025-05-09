@@ -1,185 +1,89 @@
 [
 {
-  "http_req_duration": {
-    "avg": 44.67694304347824,
-    "min": 36.862233,
-    "max": 371.042527,
-    "p95": 61.531746
-  },
-  "http_req_blocked": {
-    "avg": 0.2647003540372673,
-    "max": 42.496283
-  },
-  "http_req_connecting": {
-    "avg": 0.09375279503105591,
-    "max": 15.0942
-  },
-  "http_req_failed": {
-    "rate": 0,
-    "fails": 161
-  },
-  "vus": 1,
-  "iterations": 161,
-  "duration_ms": 10028.607059
-},
-{
-  "http_req_duration": {
-    "avg": 41.85030481855799,
-    "min": 34.888416,
-    "max": 93.503576,
-    "p95": 61.56707054999997
-  },
-  "http_req_blocked": {
-    "avg": 0.22132999349881777,
-    "max": 41.785806
-  },
-  "http_req_connecting": {
-    "avg": 0.08585509042553191,
-    "max": 15.931193
-  },
-  "http_req_failed": {
-    "rate": 0,
-    "fails": 1692
-  },
-  "vus": 10,
-  "iterations": 1692,
-  "duration_ms": 10055.906478
-},
-{
-  "http_req_duration": {
-    "avg": 41.698338034222274,
-    "min": 34.957878,
-    "max": 127.711118,
-    "p95": 59.0893424
-  },
-  "http_req_blocked": {
-    "avg": 0.2879048815199439,
-    "max": 59.9448
-  },
-  "http_req_connecting": {
-    "avg": 0.08814876067972623,
-    "max": 16.575004
-  },
-  "http_req_failed": {
-    "rate": 0,
-    "fails": 4237
-  },
-  "vus": 25,
-  "iterations": 4237,
-  "duration_ms": 10049.300115
-},
-{
-  "http_req_duration": {
-    "avg": 56.215964027966045,
-    "min": 35.066274,
-    "max": 224.878528,
-    "p95": 73.44385669999998
-  },
-  "http_req_blocked": {
-    "avg": 0.46665377906976196,
-    "max": 94.440757
-  },
-  "http_req_connecting": {
-    "avg": 0.11461887430085371,
-    "max": 18.216704
-  },
-  "http_req_failed": {
-    "rate": 0,
-    "fails": 6794
-  },
-  "vus": 50,
-  "iterations": 6794,
-  "duration_ms": 10072.313839
-},
-{
-  "http_req_duration": {
-    "avg": 23.406293919947082,
+  "latency": {
+    "avg": 0.08316430020283976,
     "min": 0,
-    "max": 138.726172,
-    "p95": 97.96906735
+    "med": 0,
+    "max": 1,
+    "p90": 0,
+    "p95": 1
   },
-  "http_req_blocked": {
-    "avg": 0.50782583906715,
-    "max": 121.878325
-  },
-  "http_req_connecting": {
-    "avg": 11.30165874487259,
-    "max": 35.374747
-  },
-  "http_req_failed": {
-    "rate": 0.7408203771088323,
-    "fails": 3134
-  },
-  "vus": 75,
-  "iterations": 12092,
-  "duration_ms": 10044.947302
+  "vus": 1
 },
 {
-  "http_req_duration": {
-    "avg": 0,
+  "latency": {
+    "avg": 0.2979922507925326,
     "min": 0,
-    "max": 0,
-    "p95": 0
+    "med": 0,
+    "max": 1,
+    "p90": 1,
+    "p95": 1
   },
-  "http_req_blocked": {
-    "avg": 0,
-    "max": 0
-  },
-  "http_req_connecting": {
-    "avg": 18.041393416629877,
-    "max": 1079.115073
-  },
-  "http_req_failed": {
-    "rate": 1,
-    "fails": 0
-  },
-  "vus": 100,
-  "iterations": 20385,
-  "duration_ms": 10044.355561
-}{
-  "http_req_duration": {
-    "avg": 0,
-    "min": 0,
-    "max": 0,
-    "p95": 0
-  },
-  "http_req_blocked": {
-    "avg": 0,
-    "max": 0
-  },
-  "http_req_connecting": {
-    "avg": 17.51447841498097,
-    "max": 1058.127801
-  },
-  "http_req_failed": {
-    "rate": 1,
-    "fails": 0
-  },
-  "vus": 150,
-  "iterations": 29317,
-  "duration_ms": 10046.060309
+  "vus": 10
 },
 {
-  "http_req_duration": {
-    "avg": 0,
+  "latency": {
+    "avg": 0.30089717046238784,
     "min": 0,
-    "max": 0,
-    "p95": 0
+    "med": 0,
+    "max": 2,
+    "p90": 1,
+    "p95": 1
   },
-  "http_req_blocked": {
-    "avg": 0,
-    "max": 0
-  },
-  "http_req_connecting": {
-    "avg": 23.55046154696469,
-    "max": 1092.809911
-  },
-  "http_req_failed": {
-    "rate": 1,
-    "fails": 0
-  },
-  "vus": 200,
-  "iterations": 33174,
-  "duration_ms": 10051.981717
+  "vus": 50
 },
-]
+{
+  "latency": {
+    "avg": 0.29058707773040343,
+    "min": 0,
+    "med": 0,
+    "max": 1,
+    "p90": 1,
+    "p95": 1
+  },
+  "vus": 100
+},
+{
+  "latency": {
+    "avg": 0.2933207309388784,
+    "min": 0,
+    "med": 0,
+    "max": 3,
+    "p90": 1,
+    "p95": 1
+  },
+  "vus": 200
+},
+{
+  "latency": {
+    "avg": 0.4074074074074074,
+    "min": 0,
+    "med": 0,
+    "max": 12,
+    "p90": 1,
+    "p95": 1
+  },
+  "vus": 500
+},
+{
+  "latency": {
+    "avg": 3.2129065040650406,
+    "min": 0,
+    "med": 0,
+    "max": 49,
+    "p90": 17.5,
+    "p95": 24
+  },
+  "vus": 1000
+},
+{
+  "latency": {
+    "avg": 4.0902734937281515,
+    "min": 0,
+    "med": 0,
+    "max": 37,
+    "p90": 19,
+    "p95": 33
+  },
+  "vus": 2000
+}]

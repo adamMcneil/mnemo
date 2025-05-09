@@ -8,9 +8,9 @@ with open('combined_results.json') as f:
 
 # Extract data
 vus = [entry['vus'] for entry in data]
-avg_durations = [entry['http_req_duration']['avg'] for entry in data]
-p95_durations = [entry['http_req_duration']['p95'] for entry in data]
-max_durations = [entry['http_req_duration']['max'] for entry in data]
+avg_durations = [entry['latency']['avg'] for entry in data]
+p95_durations = [entry['latency']['p95'] for entry in data]
+max_durations = [entry['latency']['max'] for entry in data]
 
 # Plot
 sns.set(style="whitegrid")
