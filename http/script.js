@@ -9,7 +9,7 @@ export let options = {
 };
 
 export default function() {
-	http.post('http://172.22.150.210:3000/api/movement');
+	http.post('http://172.22.154.230:3000/api/movement');
 	sleep(1.0 / 60.0);
 }
 
