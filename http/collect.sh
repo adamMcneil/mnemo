@@ -23,7 +23,7 @@ for vus in 1 50 100 150 200 250 300 350 500; do
   if [ "$protocol_type" == "http" ]; then
     k6 run script.js --vus $vus --duration ${time} > /dev/null
   else
-    k6 run ws-script.js --vus $vus > /dev/null
+    k6 run ws-script.js --vus $vus --duration ${time} > /dev/null
   fi
 
   # Append summary.json into combined_results.json
