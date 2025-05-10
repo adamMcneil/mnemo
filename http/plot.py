@@ -56,7 +56,7 @@ for i, filename in enumerate(file_list):
 
     # ax.plot(vus, max_durations, marker='s', label='Max')
     if (i == 0):
-        ax.set_title(filename)
+        ax.set_title("Latency vs VUs using Global IPs")
     elif (i == 1):
         ax.set_title("Latency vs VUs connected with LAN")
     elif (i == 2):
